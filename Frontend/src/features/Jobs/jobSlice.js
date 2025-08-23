@@ -132,7 +132,7 @@ const jobSlice = createSlice({
     jobs: [],
     applications: [],
     job: null,
-    jobSeekers: [],
+      seekers: [],
     isLoading: false,
     isSuccess: false,
     isError: false,
@@ -219,7 +219,20 @@ const jobSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload;
-      });
+      })
+        // Get Job Seekers
+        .addCase(searchJobSeekers.pending, (state) => {
+          state.isLoading = true;
+        })
+        .addCase(searchJobSeekers.fulfilled, (state, action) => {
+          state.isLoading = false;
+          state.seekers = action.payload;
+        })
+        .addCase(searchJobSeekers.rejected, (state, action) => {
+          state.isLoading = false;
+          state.isError = true;
+          state.message = action.payload;
+        });
   },
 });
 

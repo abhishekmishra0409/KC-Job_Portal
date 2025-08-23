@@ -48,6 +48,8 @@ const EmployerDashboard = () => {
     message,
   } = useSelector((state) => state.jobs);
 
+  console.log("Employer Data:", seekers);
+
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [newJobData, setNewJobData] = useState({

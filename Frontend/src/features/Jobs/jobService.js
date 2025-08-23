@@ -53,9 +53,7 @@ const viewApplications = async (jobId, token) => {
 
 // ✅ Search Job Seekers
 const searchJobSeekers = async (filters, token) => {
-  console.log(token);
 
-  console.log(filters.skills);
 
   const query = new URLSearchParams(filters).toString();
   const res = await axios.get(

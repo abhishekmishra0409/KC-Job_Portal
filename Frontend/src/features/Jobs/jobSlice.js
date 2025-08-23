@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import jobService from "./jobService";
 
 // 🔹 Get token helper
-const getToken = () => localStorage.getItem("token");
+const getToken = () => JSON.parse(localStorage.getItem("token"));
 
 // ✅ Update Company Profile
 export const updateCompanyProfile = createAsyncThunk(

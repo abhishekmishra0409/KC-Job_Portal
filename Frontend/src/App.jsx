@@ -9,6 +9,7 @@ import JobSeekerDashboard from "./pages/JobSeerker/JobSeekerDashboard";
 import EmployerDashboard from "./pages/Employer/EmployerDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
+import ForgotPassword from "./pages/Forgot-Password";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
 
             {/* Job Listings */}
             <Route path="/jobs" element={<JobListingsPage />} />

@@ -13,7 +13,7 @@ export const updateCompanyProfile = async (req, res) => {
         const { name, website, logoUrl, about, location } = req.body;
 
         const employer = await User.findByIdAndUpdate(
-            req.user._id,
+            req.user.id,
             { company: { name, website, logoUrl, about, location } },
             { new: true }
         ).select("-passwordHash");
@@ -32,7 +32,6 @@ export const createJob = async (req, res) => {
         }
 
         const {
-            company,
             title,
             description,
             location,
@@ -46,7 +45,6 @@ export const createJob = async (req, res) => {
 
         const job = new Job({
             employerId: req.user._id,
-            company,
             title,
             description,
             location,

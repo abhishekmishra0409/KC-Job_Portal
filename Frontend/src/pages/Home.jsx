@@ -126,7 +126,9 @@ const HomePage = () => {
                   key={job._id}
                   jobId={job._id}
                   title={job.title}
-                  company={job.employerId?.email || "Company"}
+                  company={
+                      job.employerId?.company?.name || job.employerId?.email
+                  }
                   location={job.location}
                   type={job.type}
                   timeAgo={new Date(job.updatedAt).toLocaleDateString()} // you can format nicely

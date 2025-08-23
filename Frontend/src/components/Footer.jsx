@@ -54,7 +54,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="text-center pt-8 border-t border-gray-700">
-                    <p className="text-gray-400 text-sm">&copy; 2023 CareerConnect. All rights reserved.</p>
+                    <p className="text-gray-400 text-sm">&copy; 2025 CareerConnect. All rights reserved.</p>
                 </div>
             </div>
         </footer>

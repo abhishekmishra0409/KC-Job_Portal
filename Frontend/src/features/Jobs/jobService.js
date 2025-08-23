@@ -11,13 +11,15 @@ const authHeader = (token) => ({
   headers: { Authorization: `Bearer ${token}` },
 });
 
+
 // ✅ Update Company Profile
 const updateCompanyProfile = async (data, token) => {
   const res = await axios.put(
-    `${base_url}users/company`,
+    `${API_URL}/company`,
     data,
     authHeader(token)
   );
+
   return res.data;
 };
 

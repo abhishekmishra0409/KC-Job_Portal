@@ -3,7 +3,7 @@ import { Schema, model, Types } from 'mongoose';
 
 const JobSchema = new Schema({
     employerId: { type: Types.ObjectId, ref: 'User', required: true },
-    company: { type: String, required: true, index: true },
+    // company: { type: String, required: true, index: true },
     title: { type: String, required: true, index: true },
     description: { type: String, required: true },
     location: { type: String, index: true },

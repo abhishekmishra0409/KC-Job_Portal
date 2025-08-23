@@ -49,10 +49,10 @@ export const toggleBanUser = async (req, res) => {
 
         if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-        user.isBanned = !user.isBanned;
+        user.status = "banned" === user.status ? "active" : "banned";
         await user.save();
 
-        res.json({ success: true, message: `User ${user.isBanned ? "banned" : "unbanned"} successfully` });
+        res.json({ success: true, message: `User ${user.status ? "banned" : "unbanned"} successfully` });
     } catch (error) {
         res.status(500).json({ success: false, message: "Error banning user", error: error.message });
     }

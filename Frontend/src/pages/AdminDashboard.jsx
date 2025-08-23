@@ -213,12 +213,12 @@ const AdminDashboard = () => {
                         <td className="py-4 px-4">
                           <span
                             className={`py-1 px-3 rounded-full text-xs font-medium ${
-                              user.isBanned
+                              user.status === "banned"
                                 ? "bg-red-100 text-red-600"
                                 : "bg-green-100 text-green-600"
                             }`}
                           >
-                            {user.isBanned ? "Banned" : "Active"}
+                            {user.status === "banned" ? "Banned" : "Active"}
                           </span>
                         </td>
                         <td className="py-4 px-4">
@@ -229,7 +229,7 @@ const AdminDashboard = () => {
                             }}
                             className="bg-yellow-500 text-white py-1 px-3 rounded-lg text-sm hover:bg-yellow-600"
                           >
-                            {user.isBanned ? "Unban" : "Ban"}
+                            {user.status === "banned" ? "Unban" : "Ban"}
                           </button>
                         </td>
                       </tr>

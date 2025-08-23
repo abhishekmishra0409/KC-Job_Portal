@@ -15,9 +15,9 @@ import { protect } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 // ✅ Employer-only routes
-router.put("/company", protect, updateCompanyProfile);
-router.post("/", protect, createJob);
-router.get("/my", protect, getMyJobs);
+router.put("/company", updateCompanyProfile);
+router.post("/", createJob);
+router.get("/my", getMyJobs);
 router.get("/:jobId/applications", protect, viewApplications);
 router.get("/jobseekers/search", protect, searchJobSeekers);
 router.put("/:id", protect, updateJob);

@@ -1,6 +1,7 @@
 import React from "react";
 import { FaBriefcase, FaHeart, FaUser, FaSignOutAlt } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 // ProfileSummary Component (nested)
 const ProfileSummary = ({ user }) => (
@@ -16,8 +17,10 @@ const ProfileSummary = ({ user }) => (
   </div>
 );
 
+
 // SidebarMenu Component (nested)
-const SidebarMenu = ({ activeSection, setActiveSection }) => (
+const SidebarMenu = ({ activeSection, setActiveSection, handleLogout }) => (
+
   <ul className="menu-items list-none space-y-2">
     <li>
       <a
@@ -72,23 +75,33 @@ const SidebarMenu = ({ activeSection, setActiveSection }) => (
       </a>
     </li>
     <li>
-      <a
-        href="#"
-        className="flex items-center p-3 rounded-lg transition-colors text-gray-700 hover:bg-blue-100 hover:text-blue-500"
-      >
-        <FaSignOutAlt className="mr-3" /> Logout
-      </a>
+        <button
+            onClick={handleLogout}
+            className="w-full text-left flex items-center p-3 rounded-lg transition-colors text-gray-700 hover:bg-blue-100 hover:text-blue-500"
+        >
+            <FaSignOutAlt className="mr-3" /> Logout
+        </button>
     </li>
   </ul>
 );
 
 const Sidebar = ({ user, activeSection, setActiveSection }) => {
-  return (
+
+    const navigate = useNavigate();
+    // Handle user logout
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        navigate("/login");
+    };
+
+    return (
     <div className="w-full lg:w-64 flex-shrink-0 bg-white rounded-xl shadow-md p-6 h-fit">
       <ProfileSummary user={user} />
       <SidebarMenu
         activeSection={activeSection}
         setActiveSection={setActiveSection}
+        handleLogout={handleLogout}
       />
     </div>
   );

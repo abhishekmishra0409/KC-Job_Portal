@@ -70,7 +70,7 @@ const AdminDashboard = () => {
       <div className="container mx-auto p-8 lg:p-12">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sidebar */}
-          <div className="w-64 flex-shrink-0 bg-white rounded-xl shadow-md p-6 h-fit">
+          <div className="w-full lg:w-64 flex-shrink-0 bg-white rounded-xl shadow-md p-6 h-fit">
             <div className="text-center pb-5 border-b border-gray-200 mb-5">
               <div className="w-20 h-20 rounded-full bg-blue-500 text-white text-3xl font-bold flex items-center justify-center mx-auto mb-4">
                 A
@@ -107,14 +107,6 @@ const AdminDashboard = () => {
                   <FaHome className="mr-3 w-5" /> Dashboard
                 </a>
               </li>
-              <li>
-                <a
-                  href="/logout"
-                  className="flex items-center p-3 rounded-lg hover:bg-blue-100 text-gray-700 hover:text-blue-500"
-                >
-                  <FaSignOutAlt className="mr-3 w-5" /> Logout
-                </a>
-              </li>
             </ul>
           </div>
 
@@ -129,16 +121,6 @@ const AdminDashboard = () => {
                   Welcome back, Admin. Here's the system overview.
                 </p>
               </div>
-              <button
-                onClick={() => {
-                  dispatch(fetchStats());
-                  dispatch(fetchUsers());
-                  dispatch(fetchJobs());
-                }}
-                className="bg-blue-500 text-white py-2 px-5 rounded-lg flex items-center"
-              >
-                <FaSyncAlt className="mr-2" /> Refresh Data
-              </button>
             </div>
 
             {/* Stats */}
@@ -229,7 +211,7 @@ const AdminDashboard = () => {
                             }}
                             className="bg-yellow-500 text-white py-1 px-3 rounded-lg text-sm hover:bg-yellow-600"
                           >
-                            {user.status === "banned" ? "Unban" : "Ban"}
+                            {user.status === "banned" ? "Active" : "Ban"}
                           </button>
                         </td>
                       </tr>
@@ -297,7 +279,7 @@ const AdminDashboard = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-md p-6">
             <div className="flex justify-between items-center pb-4 border-b border-gray-200">
-              <h2 className="text-xl font-semibold">Confirm Ban</h2>
+              <h2 className="text-xl font-semibold">Confirm</h2>
               <button
                 onClick={() => setIsBanModalOpen(false)}
                 className="text-gray-500 hover:text-gray-800"
@@ -307,7 +289,7 @@ const AdminDashboard = () => {
             </div>
             <p className="py-6">
               Are you sure you want to{" "}
-              {selectedUser?.isBanned ? "unban" : "ban"}{" "}
+              {selectedUser?.status === "banned" ? "Active" : "Ban"}{" "}
               <strong>{selectedUser?.name}</strong>?
             </p>
             <div className="flex justify-end pt-4 border-t border-gray-200">

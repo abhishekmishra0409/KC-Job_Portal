@@ -19,7 +19,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 import { MdLocationOn } from "react-icons/md";
-
+import { useNavigate } from "react-router-dom";
 // Import Redux actions
 import {
   updateCompanyProfile,
@@ -34,6 +34,7 @@ import {
 import { logout, getProfile } from "../../features/Users/userSlice";
 
 const EmployerDashboard = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, token } = useSelector((state) => state.user);
   const {
@@ -48,7 +49,6 @@ const EmployerDashboard = () => {
     message,
   } = useSelector((state) => state.jobs);
 
-  console.log("Employer Data:", seekers);
 
   const [activeSection, setActiveSection] = useState("dashboard");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -195,8 +195,9 @@ const EmployerDashboard = () => {
 
   // Handle user logout
   const handleLogout = () => {
-    dispatch(logout());
-    window.location.href = "/login";
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   // Add skill to the job requirements
@@ -249,26 +250,32 @@ const EmployerDashboard = () => {
       case "dashboard":
         return (
             <div className="space-y-6">
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                {/* Left Section */}
                 <div>
-                  <h2 className="text-3xl font-bold">Employer Dashboard</h2>
-                  <p className="text-gray-500 mt-1">
+                  <h2 className="text-xl md:text-3xl font-bold">Employer Dashboard</h2>
+                  <p className="text-gray-500 mt-1 text-sm md:text-base">
                     Welcome back, {user?.name}! Here's your hiring overview.
                   </p>
                 </div>
+
+                {/* Right Section */}
                 <button
                     onClick={() => setActiveSection("postJob")}
-                    className="bg-blue-500 text-white font-medium py-2 px-5 rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center"
+                    className="bg-blue-500 text-white font-medium py-2 px-4 md:px-5 rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center self-stretch md:self-auto"
                 >
-                  <FaPlus className="mr-2" /> Post New Job
+                  <FaPlus className="mr-2"/>
+                  <span className="text-sm md:text-base">Post New Job</span>
                 </button>
               </div>
+
 
               {/* Stats Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-white rounded-xl shadow-md p-5 flex items-center">
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-blue-100 text-blue-500 text-2xl">
-                    <FaBriefcase />
+                  <div
+                      className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-blue-100 text-blue-500 text-2xl">
+                    <FaBriefcase/>
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">{jobs?.length || 0}</h3>
@@ -276,8 +283,9 @@ const EmployerDashboard = () => {
                   </div>
                 </div>
                 <div className="bg-white rounded-xl shadow-md p-5 flex items-center">
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-green-100 text-green-500 text-2xl">
-                    <FaFileAlt />
+                  <div
+                      className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-green-100 text-green-500 text-2xl">
+                    <FaFileAlt/>
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">
@@ -287,8 +295,9 @@ const EmployerDashboard = () => {
                   </div>
                 </div>
                 <div className="bg-white rounded-xl shadow-md p-5 flex items-center">
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-purple-100 text-purple-500 text-2xl">
-                    <FaEye />
+                  <div
+                      className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-purple-100 text-purple-500 text-2xl">
+                    <FaEye/>
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">0</h3>
@@ -296,8 +305,9 @@ const EmployerDashboard = () => {
                   </div>
                 </div>
                 <div className="bg-white rounded-xl shadow-md p-5 flex items-center">
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-yellow-100 text-yellow-500 text-2xl">
-                    <FaUsers />
+                  <div
+                      className="w-12 h-12 rounded-lg flex items-center justify-center mr-4 bg-yellow-100 text-yellow-500 text-2xl">
+                    <FaUsers/>
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">{seekers?.length || 0}</h3>
@@ -329,22 +339,22 @@ const EmployerDashboard = () => {
                           </h3>
                           <div className="flex flex-wrap items-center text-gray-500 text-sm mt-2">
                         <span className="flex items-center mr-4">
-                          <MdLocationOn className="mr-1 text-blue-500" />{" "}
+                          <MdLocationOn className="mr-1 text-blue-500"/>{" "}
                           {job.isRemote ? "Remote" : job.location}
                         </span>
                             <span className="flex items-center mr-4">
-                          <FaDollarSign className="mr-1 text-blue-500" />{" "}
+                          <FaDollarSign className="mr-1 text-blue-500"/>{" "}
                               {formatSalary(job.salaryMin, job.salaryMax)}
                         </span>
                             <span className="flex items-center">
-                          <FaClock className="mr-1 text-blue-500" />{" "}
+                          <FaClock className="mr-1 text-blue-500"/>{" "}
                               {job.type}
                         </span>
                           </div>
                         </div>
                         <div className="p-4 flex-grow">
                           <div className="flex items-center text-blue-500 font-medium mb-3">
-                            <FaFileAlt className="mr-2" />{" "}
+                            <FaFileAlt className="mr-2"/>{" "}
                             {job.applicationsCount || 0} Applications
                           </div>
                           <p className="text-gray-600 text-sm">
@@ -379,14 +389,14 @@ const EmployerDashboard = () => {
                       >
                         {job.status || "active"}
                       </span>
-                          <div className="flex gap-2">
-                            <button
-                                onClick={() => setActiveSection("editJob")}
-                                className="bg-white text-gray-500 border border-gray-300 py-1.5 px-3 rounded-lg text-sm hover:bg-gray-100 transition-colors"
-                            >
-                              Edit
-                            </button>
-                          </div>
+                          {/*<div className="flex gap-2">*/}
+                          {/*  <button*/}
+                          {/*      onClick={() => setActiveSection("editJob")}*/}
+                          {/*      className="bg-white text-gray-500 border border-gray-300 py-1.5 px-3 rounded-lg text-sm hover:bg-gray-100 transition-colors"*/}
+                          {/*  >*/}
+                          {/*    Edit*/}
+                          {/*  </button>*/}
+                          {/*</div>*/}
                         </div>
                       </div>
                   ))}
@@ -674,12 +684,12 @@ const EmployerDashboard = () => {
                         {job.status || "active"}
                       </span>
                             <div className="flex gap-2">
-                              <button
-                                  onClick={() => setActiveSection("editJob")}
-                                  className="bg-white text-gray-500 border border-gray-300 py-1.5 px-3 rounded-lg text-sm hover:bg-gray-100 transition-colors"
-                              >
-                                Edit
-                              </button>
+                              {/*<button*/}
+                              {/*    onClick={() => setActiveSection("editJob")}*/}
+                              {/*    className="bg-white text-gray-500 border border-gray-300 py-1.5 px-3 rounded-lg text-sm hover:bg-gray-100 transition-colors"*/}
+                              {/*>*/}
+                              {/*  Edit*/}
+                              {/*</button>*/}
                               <button
                                   onClick={() => handleDeleteJob(job._id)}
                                   className="bg-red-500 text-white py-1.5 px-3 rounded-lg text-sm hover:bg-red-600"
@@ -951,18 +961,16 @@ const EmployerDashboard = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Sidebar Toggle for Mobile */}
-            <button
-                onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
-                className="lg:hidden w-full p-3 bg-blue-500 text-white rounded-md mb-4 flex items-center justify-center"
-            >
-              <FaBriefcase className="mr-2" /> Menu
-            </button>
+            {/*<button*/}
+            {/*    onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}*/}
+            {/*    className="lg:hidden w-full p-3 bg-blue-500 text-white rounded-md mb-4 flex items-center justify-center"*/}
+            {/*>*/}
+            {/*  <FaBriefcase className="mr-2" /> Menu*/}
+            {/*</button>*/}
 
             {/* Sidebar */}
             <div
-                className={`w-full lg:w-64 flex-shrink-0 bg-white rounded-xl shadow-md p-6 h-fit ${
-                    isMobileSidebarOpen ? "block" : "hidden"
-                } lg:block transition-all duration-300`}
+                className={`w-full lg:w-64 flex-shrink-0 bg-white rounded-xl shadow-md p-6 h-fit  lg:block transition-all duration-300`}
             >
               <div className="company-summary text-center pb-5 border-b border-gray-200 mb-5">
                 <div className="w-20 h-20 rounded-lg bg-blue-500 text-white text-3xl font-bold flex items-center justify-center mx-auto mb-4">

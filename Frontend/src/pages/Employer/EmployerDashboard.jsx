@@ -17,6 +17,11 @@ import {
   FaClock,
   FaEdit,
   FaTrash,
+  FaTimes,
+  FaUser,
+  FaEnvelopeOpen,
+  FaCalendar,
+  FaFilePdf,
 } from "react-icons/fa";
 import { MdLocationOn } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +35,7 @@ import {
   searchJobSeekers,
   updateJob,
   deleteJob,
+    getMyJobs
 } from "../../features/Jobs/jobSlice";
 import { logout, getProfile } from "../../features/Users/userSlice";
 
@@ -47,6 +53,7 @@ const EmployerDashboard = () => {
     isSuccess,
     isError,
     message,
+      myJobs
   } = useSelector((state) => state.jobs);
 
 
@@ -76,15 +83,19 @@ const EmployerDashboard = () => {
     country: "",
   });
   const [skillsInput, setSkillsInput] = useState("");
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [showApplicationsModal, setShowApplicationsModal] = useState(false);
 
   // Load user profile and employer data on mount
   useEffect(() => {
     dispatch(getProfile());
   }, [dispatch]);
 
+  // console.log("Jobs:", myJobs);
   useEffect(() => {
     if (user && user.role === "employer") {
       // Load employer data and jobs when component mounts
+      dispatch(getMyJobs());
       dispatch(browseJobs({ employerId: user._id }));
 
       // Set company profile data if available
@@ -100,7 +111,6 @@ const EmployerDashboard = () => {
     }
   }, [dispatch, user]);
 
-  // Handle job creation
   // Handle job creation
   const handleCreateJob = async (e) => {
     e.preventDefault();
@@ -245,6 +255,181 @@ const EmployerDashboard = () => {
     return "Negotiable";
   };
 
+  // Format date
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  // Get status badge class
+  const getApplicationStatusClass = (status) => {
+    switch (status) {
+      case "shortlisted":
+        return "bg-blue-100 text-blue-600";
+      case "interview":
+        return "bg-purple-100 text-purple-600";
+      case "offered":
+        return "bg-green-100 text-green-600";
+      case "rejected":
+        return "bg-red-100 text-red-600";
+      default: // received
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  // Handle viewing applications for a job
+  const handleViewApplications = (job) => {
+    setSelectedJob(job);
+    setShowApplicationsModal(true);
+  };
+
+  // Close applications modal
+  const handleCloseApplicationsModal = () => {
+    setShowApplicationsModal(false);
+    setSelectedJob(null);
+  };
+
+  // Applications Modal Component
+  const ApplicationsModal = () => {
+    if (!selectedJob) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto relative shadow-lg">
+            {/* Close button */}
+            <button
+                onClick={handleCloseApplicationsModal}
+                className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl z-10"
+            >
+              <FaTimes />
+            </button>
+
+            {/* Modal Header */}
+            <div className="border-b border-gray-200 pb-4 mb-6">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Applications for {selectedJob.title}
+              </h2>
+              <p className="text-gray-600 mt-1">
+                {selectedJob.applications.length} application
+                {selectedJob.applications.length !== 1 ? "s" : ""}
+              </p>
+            </div>
+
+            {/* Applications List */}
+            {selectedJob.applications.length > 0 ? (
+                <div className="space-y-4">
+                  {selectedJob.applications.map((application) => (
+                      <div
+                          key={application._id}
+                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-500 font-bold text-lg flex items-center justify-center">
+                              {application.seekerId.name?.charAt(0) || "U"}
+                            </div>
+                            <div>
+                              <h3 className="font-semibold text-gray-800">
+                                {application.seekerId.name}
+                              </h3>
+                              <p className="text-sm text-gray-500">
+                                {application.seekerId.email}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                      <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium ${getApplicationStatusClass(
+                              application.status
+                          )}`}
+                      >
+                        {application.status.charAt(0).toUpperCase() +
+                            application.status.slice(1)}
+                      </span>
+                            <span className="text-sm text-gray-500">
+                        Applied {formatDate(application.createdAt)}
+                      </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                          {application.seekerId.skills &&
+                              application.seekerId.skills.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-gray-700 mb-1">
+                                      Skills
+                                    </h4>
+                                    <div className="flex flex-wrap gap-1">
+                                      {application.seekerId.skills.map((skill, index) => (
+                                          <span
+                                              key={index}
+                                              className="px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded-full"
+                                          >
+                                {skill}
+                              </span>
+                                      ))}
+                                    </div>
+                                  </div>
+                              )}
+
+                          {application.resumeUrl && (
+                              <div>
+                                <h4 className="text-sm font-medium text-gray-700 mb-1">
+                                  Resume
+                                </h4>
+                                <a
+                                    href={application.resumeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center text-blue-500 hover:text-blue-700 text-sm"
+                                >
+                                  <FaFilePdf className="mr-1" />
+                                  View Resume
+                                </a>
+                              </div>
+                          )}
+                        </div>
+
+                        {application.coverLetter && (
+                            <div>
+                              <h4 className="text-sm font-medium text-gray-700 mb-1">
+                                Cover Letter
+                              </h4>
+                              <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
+                                {application.coverLetter}
+                              </p>
+                            </div>
+                        )}
+
+                        {/*<div className="flex gap-2 mt-4 pt-3 border-t border-gray-100">*/}
+                        {/*  <button className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600">*/}
+                        {/*    Shortlist*/}
+                        {/*  </button>*/}
+                        {/*  <button className="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600">*/}
+                        {/*    Schedule Interview*/}
+                        {/*  </button>*/}
+                        {/*  <button className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600">*/}
+                        {/*    Reject*/}
+                        {/*  </button>*/}
+                        {/*</div>*/}
+                      </div>
+                  ))}
+                </div>
+            ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <FaUser className="text-4xl text-gray-300 mx-auto mb-3" />
+                  <p>No applications yet for this job.</p>
+                </div>
+            )}
+          </div>
+        </div>
+    );
+  };
+
   const renderMainContent = () => {
     switch (activeSection) {
       case "dashboard":
@@ -278,7 +463,7 @@ const EmployerDashboard = () => {
                     <FaBriefcase/>
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold">{jobs?.length || 0}</h3>
+                    <h3 className="text-2xl font-bold">{myJobs?.length || 0}</h3>
                     <p className="text-gray-500 text-sm">Active Jobs</p>
                   </div>
                 </div>
@@ -289,7 +474,7 @@ const EmployerDashboard = () => {
                   </div>
                   <div>
                     <h3 className="text-2xl font-bold">
-                      {jobs?.reduce((total, job) => total + (job.applicationsCount || 0), 0) || 0}
+                      {myJobs?.reduce((total, job) => total + (job.applications.length || 0), 0) || 0}
                     </h3>
                     <p className="text-gray-500 text-sm">Total Applications</p>
                   </div>
@@ -328,7 +513,7 @@ const EmployerDashboard = () => {
                   </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {jobs && jobs.slice(0, 2).map((job) => (
+                  {myJobs && myJobs.slice(0, 2).map((job) => (
                       <div
                           key={job._id}
                           className="job-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
@@ -353,10 +538,13 @@ const EmployerDashboard = () => {
                           </div>
                         </div>
                         <div className="p-4 flex-grow">
-                          <div className="flex items-center text-blue-500 font-medium mb-3">
+                          <button
+                              onClick={() => handleViewApplications(job)}
+                              className="flex items-center text-blue-500 font-medium mb-3 hover:text-blue-600"
+                          >
                             <FaFileAlt className="mr-2"/>{" "}
-                            {job.applicationsCount || 0} Applications
-                          </div>
+                            {job.applications?.length || 0} Applications
+                          </button>
                           <p className="text-gray-600 text-sm">
                             {job.description.substring(0, 100)}...
                           </p>
@@ -400,7 +588,7 @@ const EmployerDashboard = () => {
                         </div>
                       </div>
                   ))}
-                  {(!jobs || jobs.length === 0) && (
+                  {(!myJobs || myJobs.length === 0) && (
                       <p className="text-gray-500">No jobs posted yet.</p>
                   )}
                 </div>
@@ -617,8 +805,8 @@ const EmployerDashboard = () => {
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {jobs &&
-                    jobs.map((job) => (
+                {myJobs &&
+                    myJobs.map((job) => (
                         <div
                             key={job._id}
                             className="job-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
@@ -642,10 +830,13 @@ const EmployerDashboard = () => {
                             </div>
                           </div>
                           <div className="p-4 flex-grow">
-                            <div className="flex items-center text-blue-500 font-medium mb-3">
-                              <FaFileAlt className="mr-2" />{" "}
-                              {job.applicationsCount || 0} Applications
-                            </div>
+                            <button
+                                onClick={() => handleViewApplications(job)}
+                                className="flex items-center text-blue-500 font-medium mb-3 hover:text-blue-600"
+                            >
+                              <FaFileAlt className="mr-2"/>{" "}
+                              {job.applications?.length || 0} Applications
+                            </button>
                             <p className="text-gray-600 text-sm">
                               {job.description.substring(0, 100)}...
                             </p>
@@ -700,7 +891,7 @@ const EmployerDashboard = () => {
                           </div>
                         </div>
                     ))}
-                {(!jobs || jobs.length === 0) && (
+                {(!myJobs || myJobs.length === 0) && (
                     <p className="text-gray-500">No jobs posted yet.</p>
                 )}
               </div>
@@ -986,13 +1177,13 @@ const EmployerDashboard = () => {
                   <div className="stat-item flex justify-between text-sm text-gray-600 mb-2">
                     <span>Job Posts</span>
                     <span className="font-semibold text-blue-500">
-                    {jobs?.length || 0}
+                    {myJobs?.length || 0}
                   </span>
                   </div>
                   <div className="stat-item flex justify-between text-sm text-gray-600">
                     <span>Applications</span>
                     <span className="font-semibold text-blue-500">
-                    {jobs?.reduce((total, job) => total + (job.applicationsCount || 0), 0) || 0}
+                    {myJobs?.reduce((total, job) => total + (job.applications.length || 0), 0) || 0}
                   </span>
                   </div>
                 </div>
@@ -1062,6 +1253,8 @@ const EmployerDashboard = () => {
             <div className="main-content flex-1">{renderMainContent()}</div>
           </div>
         </div>
+        {/* Applications Modal */}
+        {showApplicationsModal && <ApplicationsModal />}
       </div>
   );
 };

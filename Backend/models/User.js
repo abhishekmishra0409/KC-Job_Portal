@@ -23,7 +23,7 @@ const UserSchema = new Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true, index: true },
     phone: String,
-    passwordHash: { type: String }, // empty for social providers
+    passwordHash: { type: String },
     googleId: String,
 // Job Seeker fields
     skills: { type: [String], index: true },

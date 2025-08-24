@@ -14,6 +14,7 @@ const JobSchema = new Schema({
     requiredExperience: { type: Number, index: true }, // in years
     isRemote: { type: Boolean, index: true },
     status: { type: String, enum: ['active','paused','closed'], default: 'active', index: true },
+    applications: [{ type: Types.ObjectId, ref: 'Application' }],
 }, { timestamps: true });
 
 

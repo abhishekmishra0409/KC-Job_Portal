@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import jobService from "./jobService";
 
-// 🔹 Get token helper
+// Get token helper
 const getToken = () => JSON.parse(localStorage.getItem("token"));
 
-// ✅ Update Company Profile
+// Update Company Profile
 export const updateCompanyProfile = createAsyncThunk(
   "jobs/updateCompanyProfile",
   async (data, thunkAPI) => {
@@ -17,7 +17,7 @@ export const updateCompanyProfile = createAsyncThunk(
   }
 );
 
-// ✅ Create Job
+// Create Job
 export const createJob = createAsyncThunk(
   "jobs/createJob",
   async (jobData, thunkAPI) => {
@@ -30,7 +30,7 @@ export const createJob = createAsyncThunk(
   }
 );
 
-// ✅ Browse Jobs
+// Browse Jobs
 export const browseJobs = createAsyncThunk(
   "jobs/browseJobs",
   async (filters = {}, thunkAPI) => {
@@ -42,7 +42,7 @@ export const browseJobs = createAsyncThunk(
   }
 );
 
-// ✅ Get Job by ID
+// Get Job by ID
 export const getJobById = createAsyncThunk(
   "jobs/getJobById",
   async (id, thunkAPI) => {
@@ -54,7 +54,7 @@ export const getJobById = createAsyncThunk(
   }
 );
 
-// ✅ View Applications
+// View Applications
 export const viewApplications = createAsyncThunk(
   "jobs/viewApplications",
   async (jobId = null, thunkAPI) => {
@@ -70,7 +70,7 @@ export const viewApplications = createAsyncThunk(
   }
 );
 
-// ✅ Search Job Seekers
+// Search Job Seekers
 export const searchJobSeekers = createAsyncThunk(
   "jobs/searchJobSeekers",
   async (filters, thunkAPI) => {
@@ -83,7 +83,7 @@ export const searchJobSeekers = createAsyncThunk(
   }
 );
 
-// ✅ Update Job
+// Update Job
 export const updateJob = createAsyncThunk(
   "jobs/updateJob",
   async ({ id, jobData }, thunkAPI) => {
@@ -96,7 +96,7 @@ export const updateJob = createAsyncThunk(
   }
 );
 
-// ✅ Delete Job
+// Delete Job
 export const deleteJob = createAsyncThunk(
   "jobs/deleteJob",
   async (id, thunkAPI) => {
@@ -122,9 +122,6 @@ export const getMyJobs = createAsyncThunk(
   }
 );
 
-// ==================================================
-// Slice
-// ==================================================
 const jobSlice = createSlice({
   name: "jobs",
   initialState: {

@@ -1,4 +1,3 @@
-// controllers/applicationController.js
 import Application from "../models/Application.js";
 import Job from "../models/Job.js";
 import User from "../models/User.js";
@@ -11,8 +10,6 @@ export const applyToJob = async (req, res) => {
         const { jobId } = req.params;
         const seekerId = req.user._id;
         const { resumeUrl, coverLetter } = req.body;
-
-        // console.log(seekerId)
 
         const job = await Job.findById(jobId);
         if (!job) return res.status(404).json({ message: "Job not found" });
@@ -29,11 +26,17 @@ export const applyToJob = async (req, res) => {
         });
 
         await application.save();
+
+        // ✅ Add application to Job
+        job.applications.push(application._id);
+        await job.save();
+
         res.status(201).json({ message: "Applied successfully", application });
     } catch (error) {
         res.status(500).json({ message: "Error applying for job", error: error.message });
     }
 };
+
 
 // 📌 Withdraw Application
 // DELETE /api/applications/withdraw/:jobId
@@ -47,11 +50,17 @@ export const withdrawApplication = async (req, res) => {
             return res.status(400).json({ message: "You have not applied to this job" });
         }
 
+        // ✅ Remove application reference from Job
+        await Job.findByIdAndUpdate(jobId, {
+            $pull: { applications: application._id }
+        });
+
         res.json({ message: "Application withdrawn successfully" });
     } catch (error) {
         res.status(500).json({ message: "Error withdrawing application", error: error.message });
     }
 };
+
 
 // 📌 Get My Applications
 // GET /api/applications/my

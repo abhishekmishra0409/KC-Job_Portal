@@ -82,6 +82,13 @@ export const browseJobs = async (req, res) => {
 
         const jobs = await Job.find(query)
             .populate("employerId", "company.name email")
+            .populate({
+                path: "applications",
+                populate: {
+                    path: "seekerId",
+                    select: "name email skills experience resumeUrl"
+                }
+            })
             .skip((page - 1) * limit)
             .limit(Number(limit))
             .sort({ createdAt: -1 });
@@ -106,7 +113,15 @@ export const browseJobs = async (req, res) => {
 // ✅ Get Job By ID
 export const getJobById = async (req, res) => {
     try {
-        const job = await Job.findById(req.params.id).populate("employerId", "company.name email");
+        const job = await Job.findById(req.params.id)
+            .populate("employerId", "company.name email")
+            .populate({
+            path: "applications",
+            populate: {
+                path: "seekerId",
+                select: "name email skills experience resumeUrl"
+            }
+            });
         if (!job) return res.status(404).json({ success: false, message: "Job not found" });
 
         res.json({ success: true, job });
@@ -123,14 +138,18 @@ export const viewApplications = async (req, res) => {
         }
 
         const jobId = req.params.jobId;
-        const applications = await Application.find({ job: jobId })
-            .populate("jobSeeker", "name email skills experience resumeUrl");
+
+        // ✅ Correct field names (jobId & seekerId)
+        const applications = await Application.find({ jobId })
+            .populate("seekerId", "firstname lastname email skills experience resumeUrl")
+            .populate("jobId", "title location type salaryMin salaryMax");
 
         res.status(200).json(applications);
     } catch (error) {
-        res.status(500).json({ message: "Error fetching applications", error });
+        res.status(500).json({ message: "Error fetching applications", error: error.message });
     }
 };
+
 
 // ✅ Search job seekers by skills & location (Employer Only)
 export const searchJobSeekers = async (req, res) => {
@@ -197,7 +216,15 @@ export const getMyJobs = async (req, res) => {
             return res.status(403).json({ message: "Only employers can view their jobs" });
         }
 
-        const jobs = await Job.find({ employerId: req.user._id }).sort({ createdAt: -1 });
+        const jobs = await Job.find({ employerId: req.user._id })
+            .populate({
+            path: "applications",
+            populate: {
+                path: "seekerId",
+                select: "name email skills experience resumeUrl"
+            }
+            })
+            .sort({ createdAt: -1 });
         res.status(200).json(jobs);
     } catch (error) {
         res.status(500).json({ message: "Error fetching jobs", error });

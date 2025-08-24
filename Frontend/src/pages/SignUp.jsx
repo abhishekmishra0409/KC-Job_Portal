@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { register, verifyOTP, resendOTP } from "../features/Users/userSlice";
+import {register, verifyOTP, resendOTP, googleAuth} from "../features/Users/userSlice";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
 
@@ -128,6 +128,18 @@ const SignupPage = () => {
     });
   };
 
+
+  // Handle Google login
+  const handleGoogleSuccess = (credentialResponse) => {
+    dispatch(googleAuth(credentialResponse.credential));
+    navigate("/");
+  };
+
+  const handleGoogleFailure = (error) => {
+    console.error("Google Login Error:", error);
+  };
+
+
   const renderSignupForm = () => (
     <>
       <form onSubmit={handleSignup}>
@@ -250,14 +262,13 @@ const SignupPage = () => {
         <span className="px-4">Or sign up with</span>
         <span className="flex-1 h-px bg-gray-200"></span>
       </div>
-      <GoogleLogin
-        onSuccess={async (credentialResponse) => {
-          console.log("Google login successful:", credentialResponse);
-        }}
-        onError={() => {
-          console.log("Login Failed");
-        }}
-      />
+      {/* Google Login */}
+      <div className="flex justify-center">
+        <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleFailure}
+        />
+      </div>
       <div className="text-center mt-6 pt-5 border-t border-gray-200">
         Already have an account?{" "}
         <a href="/login" className="text-blue-500 font-medium hover:underline">

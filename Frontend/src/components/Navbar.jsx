@@ -63,7 +63,7 @@ const Navbar = () => {
     } else if (user.user.role === "employer") {
       navigate("/employer-dashboard");
     } else {
-      navigate("/profile");
+      navigate("/admin-dashboard");
     }
   };
 

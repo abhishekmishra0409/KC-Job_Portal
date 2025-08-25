@@ -21,7 +21,7 @@ const HomePage = () => {
     dispatch(browseJobs({ page: 1, limit: 3 }));
   }, [dispatch]);
 
-  console.log(jobs);
+  // console.log(jobs);
   return (
     <div className="font-sans text-gray-800 bg-gray-100 min-h-screen">
       <main>
